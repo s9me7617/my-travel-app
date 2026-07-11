@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 韓國釜山行</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+            background: #f5f5f5;
+            padding-bottom: 80px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #FF6B6B 0%, #FFD93D 100%);
+            padding: 30px 20px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header .emoji {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header .subtitle {
+            font-size: 1em;
+            opacity: 0.95;
+        }
+
+        .countdown {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+
+        .countdown .value {
+            font-weight: bold;
+            font-size: 1.3em;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .section-title {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .section-title .emoji {
+            font-size: 1.5em;
+        }
+
+        .trip-info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .info-card .label {
+            font-size: 0.85em;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .info-card .value {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .flight-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #FFD93D;
+        }
+
+        .flight-item h4 {
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 0.95em;
+        }
+
+        .flight-route {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .airport-info {
+            flex: 1;
+            text-align: center;
+        }
+
+        .airport-time {
+            font-weight: bold;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .airport-name {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 3px;
+        }
+
+        .arrow {
+            color: #FF6B6B;
+            font-size: 1.2em;
+        }
+
+        .airline {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 8px;
+        }
+
+        .airline .badge {
+            background: #FF6B6B;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 5px;
+            font-weight: 600;
+        }
+
+        .note {
+            font-size: 0.8em;
+            color: #FF6B6B;
+            margin-top: 5px;
+            padding: 5px;
+            background: #ffe0e0;
+            border-radius: 5px;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .checklist-item:hover {
+            background: #eee;
+        }
+
+        .checklist-item.completed {
+            opacity: 0.6;
+        }
+
+        .checklist-item.completed .label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .checklist-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .checklist-item .label {
+            flex: 1;
+            cursor: pointer;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.3s;
+        }
+
+        .progress-text {
+            font-size: 0.9em;
+            color: #666;
+            text-align: center;
+        }
+
+        .nav-tabs {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 5px;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .nav-tab {
+            background: #f0f0f0;
+            border: none;
+            padding: 12px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .nav-tab .emoji {
+            display: block;
+            font-size: 1.3em;
+            margin-bottom: 5px;
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .expense-form {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .expense-form input,
+        .expense-form select,
+        .expense-form textarea {
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+        }
+
+        .expense-form button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+
+        .expense-form button:active {
+            transform: scale(0.98);
+        }
+
+        .expense-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .expense-item .description {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .expense-item .category {
+            background: #667eea;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 5px;
+            font-size: 0.8em;
+        }
+
+        .expense-item .amount {
+            font-weight: bold;
+            color: #FF6B6B;
+            font-size: 1.1em;
+        }
+
+        .expense-summary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .expense-summary .label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .expense-summary .total {
+            font-size: 2em;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .itinerary-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .itinerary-item .day {
+            background: #667eea;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.85em;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .itinerary-item .title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .itinerary-item .description {
+            font-size: 0.9em;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .shopping-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .shopping-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .shopping-item.completed {
+            opacity: 0.6;
+        }
+
+        .shopping-item.completed .item-name {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .shopping-item .item-name {
+            flex: 1;
+            cursor: pointer;
+            min-width: 150px;
+        }
+
+        .shopping-item .price {
+            color: #FF6B6B;
+            font-weight: bold;
+        }
+
+        .delete-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: background 0.2s;
+        }
+
+        .delete-btn:hover {
+            background: #cc0000;
+        }
+
+        .add-form {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .add-form input,
+        .add-form textarea,
+        .add-form button {
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+        }
+
+        .add-form button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+
+        .add-form button:active {
+            transform: scale(0.98);
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.5em;
+            }
+
+            .trip-info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-tabs {
+                grid-template-columns: repeat(5, 1fr);
+            }
+
+            .nav-tab .emoji {
+                margin-bottom: 3px;
+            }
+
+            .nav-tab {
+                padding: 8px 5px;
+                font-size: 0.75em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="emoji">🍉</div>
+        <h1>SUMMER TRIP</h1>
+        <div class="subtitle">2026 韓國釜山行</div>
+        <div class="countdown">
+            <div>距離韓國行剩下</div>
+            <div class="value" id="countdown">計算中...</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('overview', this)">
+                <span class="emoji">🌴</span>
+                <span>總覽</span>
+            </button>
+            <button class="nav-tab" onclick="switchTab('prepare', this)">
+                <span class="emoji">🎒</span>
+                <span>準備</span>
+            </button>
+            <button class="nav-tab" onclick="switchTab('itinerary', this)">
+                <span class="emoji">🗺️</span>
+                <span>行程</span>
+            </button>
+            <button class="nav-tab" onclick="switchTab('shopping', this)">
+                <span class="emoji">🛍️</span>
+                <span>購物</span>
+            </button>
+            <button class="nav-tab" onclick="switchTab('expense', this)">
+                <span class="emoji">💰</span>
+                <span>開支</span>
+            </button>
+        </div>
+
+        <!-- 總覽 Tab -->
+        <div id="overview" class="tab-content active">
+            <div class="section">
+                <div class="section-title">
+                    <span class="emoji">📋</span>
+                    <span>旅遊資訊</span>
+                </div>
+                <div class="trip-info-grid">
+                    <div class="info-card">
+                        <div class="label">出發日期</div>
+                        <div class="value">2026/08/11</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="label">回程日期</div>
+                        <div class="value">2026/08/15</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="label">停留時間</div>
+                        <div class="value">5天4夜</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="label">旅遊人數</div>
+                        <div class="value">2大2小</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">
+                    <span class="emoji">✈️</span>
+                    <span>航班資訊</span>
+                </div>
+
+                <div class="flight-item">
+                    <h4>去程 2026/08/11 (二)</h4>
+                    <div class="flight-route">
+                        <div class="airport-info">
+                            <div class="airport-time">02:00</div>
+                            <div class="airport-name">桃園國際機場</div>
+                        </div>
+                        <div class="arrow">→</div>
+                        <div class="airport-info">
+                            <div class="airport-time">05:25</div>
+                            <div class="airport-name">大邱機場</div>
+                        </div>
+                    </div>
+                    <div class="airline">
+                        <span class="badge">德威航空 TW664</span>
+                    </div>
+                </div>
+
+                <div class="flight-item">
+                    <h4>回程 2026/08/15 (六)</h4>
+                    <div class="flight-route">
+                        <div class="airport-info">
+                            <div class="airport-time">22:40</div>
+                            <div class="airport-name">大邱機場</div>
+                        </div>
+                        <div class="arrow">→</div>
+                        <div class="airport-info">
+                            <div class="airport-time">00:15</div>
+                            <div class="airport-name">桃園國際機場</div>
+                        </div>
+                    </div>
+                    <div class="airline">
+                        <span class="badge">德威航空 TW663</span>
+                    </div>
+                    <div class="note">✓ 抵台日期標示為 2026/08/15(六)，實際為跨午夜航班</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 準備 Tab -->
+        <div id="prepare" class="tab-content">
+            <div class="section">
+                <div class="section-title">
+                    <span class="emoji">🎒</span>
+                    <span>準備清單</span>
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" id="prepareProgress" style="width: 0%"></div>
+                </div>
+                <div class="progress-text" id="prepareText">0 / 0</div>
+
+                <div id="prepareList" style="margin-top: 15px;"></div>
+
+                <div class="add-form" style="margin-top: 15px;">
+                    <input type="text" id="prepareInput" placeholder="新增準備項目...">
+                    <button onclick="addPrepareItem()">新增</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 行程 Tab -->
+        <div id="itinerary" class="tab-content">
+            <div class="section">
+                <div class="section-title">
+                    <span class="emoji">🗺️</span>
+                    <span>行程規劃</span>
+                </div>
+
+                <div id="itineraryList"></div>
+
+                <div class="add-form" style="margin-top: 15px;">
+                    <input type="text" id="itineraryDayInput" placeholder="第幾天 (如: 第1天)">
+                    <input type="text" id="itineraryTitleInput" placeholder="行程標題">
+                    <textarea id="itineraryDescInput" placeholder="行程描述"></textarea>
+                    <button onclick="addItineraryItem()">新增行程</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 購物 Tab -->
+        <div id="shopping" class="tab-content">
+            <div class="section">
+                <div class="section-title">
+                    <span class="emoji">🛍️</span>
+                    <span>購物清單</span>
+                </div>
+
+                <div id="shoppingList"></div>
+
+                <div class="add-form" style="margin-top: 15px;">
+                    <input type="text" id="shoppingInput" placeholder="物品名稱">
+                    <input type="number" id="shoppingPrice" placeholder="價格 (KRW)" min="0">
+                    <button onclick="addShoppingItem()">新增</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 開支 Tab -->
+        <div id="expense" class="tab-content">
+            <div class="section">
+                <div class="section-title">
+                    <span class="emoji">💰</span>
+                    <span>旅遊開支</span>
+                </div>
+
+                <div class="expense-summary">
+                    <div class="label">總開支</div>
+                    <div class="total" id="totalExpense">NT$0</div>
+                </div>
+
+                <div class="expense-form">
+                    <input type="text" id="expenseDesc" placeholder="開支描述">
+                    <select id="expenseCategory">
+                        <option value="機票">機票</option>
+                        <option value="住宿">住宿</option>
+                        <option value="飲食">飲食</option>
+                        <option value="購物">購物</option>
+                        <option value="交通">交通</option>
+                        <option value="其他">其他</option>
+                    </select>
+                    <input type="number" id="expenseAmount" placeholder="金額 (NT$)" min="0">
+                    <button onclick="addExpense()">記錄開支</button>
+                </div>
+
+                <div id="expenseList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 數據存儲
+        let data = {
+            prepare: [],
+            itinerary: [],
+            shopping: [],
+            expense: []
+        };
+
+        // 從 localStorage 加載數據
+        function loadData() {
+            const saved = localStorage.getItem('tripData');
+            if (saved) {
+                data = JSON.parse(saved);
+            }
+            render();
+        }
+
+        // 保存數據
+        function saveData() {
+            localStorage.setItem('tripData', JSON.stringify(data));
+        }
+
+        // 切換 Tab
+        function switchTab(tabName, btn) {
+            // 隱藏所有 Tab 內容
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.remove('active');
+            });
+            // 移除所有 Tab 按鈕的 active 狀態
+            document.querySelectorAll('.nav-tab').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // 顯示選中的 Tab
+            document.getElementById(tabName).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        // 倒數計時
+        function updateCountdown() {
+            const tripDate = new Date('2026-08-11');
+            const today = new Date();
+            const diff = tripDate - today;
+            const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+            
+            const countdownEl = document.getElementById('countdown');
+            if (days > 0) {
+                countdownEl.textContent = days + ' 天';
+            } else if (days === 0) {
+                countdownEl.textContent = '就在今天！';
+            } else {
+                countdownEl.textContent = '旅遊進行中！';
+            }
+        }
+
+        // 準備清單相關函數
+        function addPrepareItem() {
+            const input = document.getElementById('prepareInput');
+            const text = input.value.trim();
+            if (text) {
+                data.prepare.push({
+                    id: Date.now(),
+                    text: text,
+                    completed: false
+                });
+                input.value = '';
+                saveData();
+                render();
+            }
+        }
+
+        function togglePrepare(id) {
+            const item = data.prepare.find(x => x.id === id);
+            if (item) {
+                item.completed = !item.completed;
+                saveData();
+                render();
+            }
+        }
+
+        function deletePrepare(id) {
+            data.prepare = data.prepare.filter(x => x.id !== id);
+            saveData();
+            render();
+        }
+
+        // 購物清單相關函數
+        function addShoppingItem() {
+            const nameInput = document.getElementById('shoppingInput');
+            const priceInput = document.getElementById('shoppingPrice');
+            const name = nameInput.value.trim();
+            const price = priceInput.value;
+
+            if (name && price) {
+                data.shopping.push({
+                    id: Date.now(),
+                    name: name,
+                    price: parseInt(price),
+                    completed: false
+                });
+                nameInput.value = '';
+                priceInput.value = '';
+                saveData();
+                render();
+            }
+        }
+
+        function toggleShopping(id) {
+            const item = data.shopping.find(x => x.id === id);
+            if (item) {
+                item.completed = !item.completed;
+                saveData();
+                render();
+            }
+        }
+
+        function deleteShopping(id) {
+            data.shopping = data.shopping.filter(x => x.id !== id);
+            saveData();
+            render();
+        }
+
+        // 行程相關函數
+        function addItineraryItem() {
+            const dayInput = document.getElementById('itineraryDayInput');
+            const titleInput = document.getElementById('itineraryTitleInput');
+            const descInput = document.getElementById('itineraryDescInput');
+
+            const day = dayInput.value.trim();
+            const title = titleInput.value.trim();
+            const description = descInput.value.trim();
+
+            if (day && title && description) {
+                data.itinerary.push({
+                    id: Date.now(),
+                    day: day,
+                    title: title,
+                    description: description
+                });
+                dayInput.value = '';
+                titleInput.value = '';
+                descInput.value = '';
+                saveData();
+                render();
+            }
+        }
+
+        function deleteItinerary(id) {
+            data.itinerary = data.itinerary.filter(x => x.id !== id);
+            saveData();
+            render();
+        }
+
+        // 開支相關函數
+        function addExpense() {
+            const descInput = document.getElementById('expenseDesc');
+            const categoryInput = document.getElementById('expenseCategory');
+            const amountInput = document.getElementById('expenseAmount');
+
+            const desc = descInput.value.trim();
+            const category = categoryInput.value;
+            const amount = parseInt(amountInput.value);
+
+            if (desc && amount) {
+                data.expense.push({
+                    id: Date.now(),
+                    description: desc,
+                    category: category,
+                    amount: amount
+                });
+                descInput.value = '';
+                amountInput.value = '';
+                saveData();
+                render();
+            }
+        }
+
+        function deleteExpense(id) {
+            data.expense = data.expense.filter(x => x.id !== id);
+            saveData();
+            render();
+        }
+
+        // 渲染函數
+        function render() {
+            // 準備清單
+            const prepareList = document.getElementById('prepareList');
+            prepareList.innerHTML = data.prepare.map(item => `
+                <div class="checklist-item ${item.completed ? 'completed' : ''}">
+                    <input type="checkbox" ${item.completed ? 'checked' : ''} 
+                           onchange="togglePrepare(${item.id})">
+                    <span class="label" onclick="togglePrepare(${item.id})">${item.text}</span>
+                    <button class="delete-btn" onclick="deletePrepare(${item.id})">刪除</button>
+                </div>
+            `).join('');
+
+            // 更新準備進度
+            const completedCount = data.prepare.filter(x => x.completed).length;
+            const totalCount = data.prepare.length;
+            document.getElementById('prepareProgress').style.width = totalCount > 0 ? (completedCount / totalCount * 100) + '%' : '0%';
+            document.getElementById('prepareText').textContent = `${completedCount} / ${totalCount}`;
+
+            // 購物清單
+            const shoppingList = document.getElementById('shoppingList');
+            shoppingList.innerHTML = data.shopping.map(item => `
+                <div class="shopping-item ${item.completed ? 'completed' : ''}">
+                    <input type="checkbox" ${item.completed ? 'checked' : ''} 
+                           onchange="toggleShopping(${item.id})">
+                    <span class="item-name" onclick="toggleShopping(${item.id})">${item.name}</span>
+                    <span class="price">₩${item.price.toLocaleString()}</span>
+                    <button class="delete-btn" onclick="deleteShopping(${item.id})">刪除</button>
+                </div>
+            `).join('');
+
+            // 行程
+            const itineraryList = document.getElementById('itineraryList');
+            itineraryList.innerHTML = data.itinerary.map(item => `
+                <div class="itinerary-item">
+                    <span class="day">${item.day}</span>
+                    <div class="title">${item.title}</div>
+                    <div class="description">${item.description}</div>
+                    <button class="delete-btn" onclick="deleteItinerary(${item.id})" style="margin-top: 10px;">刪除</button>
+                </div>
+            `).join('');
+
+            // 開支
+            const expenseList = document.getElementById('expenseList');
+            const totalExpense = data.expense.reduce((sum, item) => sum + item.amount, 0);
+            document.getElementById('totalExpense').textContent = 'NT$' + totalExpense.toLocaleString();
+
+            expenseList.innerHTML = data.expense.map(item => `
+                <div class="expense-item">
+                    <div class="description">
+                        <span class="category">${item.category}</span>
+                        ${item.description}
+                    </div>
+                    <div class="amount">NT$${item.amount.toLocaleString()}</div>
+                    <button class="delete-btn" onclick="deleteExpense(${item.id})">刪除</button>
+                </div>
+            `).join('');
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            updateCountdown();
+            setInterval(updateCountdown, 1000 * 60); // 每分鐘更新一次倒數
+        });
+    </script>
+</body>
+</html>
