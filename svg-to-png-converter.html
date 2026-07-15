@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVG 轉 PNG - 夏日韓國旅遊 Icon 轉換器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            padding: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #999;
+            margin-bottom: 40px;
+            font-size: 14px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .preview-box {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 16px;
+            padding: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 250px;
+            margin-bottom: 20px;
+        }
+
+        svg {
+            max-width: 100%;
+            height: auto;
+            filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.1));
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        input[type="number"],
+        select {
+            padding: 10px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        button {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-download {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-copy {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-copy:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-copy.copied {
+            background: #4caf50;
+            color: white;
+        }
+
+        .info-box {
+            background: #e8f5ff;
+            border-left: 4px solid #2196f3;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .info-box strong {
+            color: #1976d2;
+        }
+
+        .size-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .size-item {
+            background: white;
+            border: 1px solid #e0e0e0;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+
+        .size-item strong {
+            color: #667eea;
+        }
+
+        .error {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+            padding: 12px;
+            border-radius: 8px;
+            color: #c62828;
+            font-size: 14px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .success {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 12px;
+            border-radius: 8px;
+            color: #2e7d32;
+            font-size: 14px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        code {
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        @media (max-width: 600px) {
+            .controls {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .container {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 SVG 轉 PNG 轉換器</h1>
+        <p class="subtitle">夏日清涼韓國旅遊 Icon</p>
+
+        <div class="error" id="errorMsg"></div>
+        <div class="success" id="successMsg"></div>
+
+        <!-- 預覽區域 -->
+        <div class="section">
+            <div class="section-title">📱 Icon 預覽</div>
+            <div class="preview-box">
+                <svg id="iconSvg" viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg" style="width: 180px; height: 180px;">
+                    <defs>
+                        <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#E0F7FF;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#B3E5FC;stop-opacity:1" />
+                        </linearGradient>
+                        <linearGradient id="iconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#00BCD4;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#0097A7;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    
+                    <!-- 背景 -->
+                    <rect width="180" height="180" fill="url(#bgGradient)"/>
+                    
+                    <!-- 太極圖案 -->
+                    <g id="taegeuk">
+                        <circle cx="90" cy="85" r="48" fill="none" stroke="url(#iconGradient)" stroke-width="2" opacity="0.3"/>
+                        <path d="M 90 37 A 48 48 0 0 1 135 85 A 48 48 0 0 1 90 85 Z" fill="#FF6B6B" opacity="0.8"/>
+                        <path d="M 90 85 A 48 48 0 0 1 45 85 A 48 48 0 0 1 90 85 Z" fill="#00BCD4"/>
+                        <circle cx="90" cy="60" r="4" fill="#FF6B6B"/>
+                        <circle cx="90" cy="110" r="4" fill="#00BCD4"/>
+                    </g>
+                    
+                    <!-- 冰塊符號 -->
+                    <g id="ice">
+                        <path d="M 90 30 L 85 38 L 95 38 Z" fill="#00BCD4" opacity="0.7"/>
+                        <circle cx="90" cy="35" r="2" fill="#FFFFFF"/>
+                    </g>
+                    
+                    <!-- 地標符號 -->
+                    <g id="landmark">
+                        <rect x="85" y="130" width="10" height="20" fill="#00BCD4" opacity="0.7"/>
+                        <polygon points="90,125 88,130 92,130" fill="#00BCD4" opacity="0.7"/>
+                        <circle cx="90" cy="127" r="1.5" fill="#FFFFFF"/>
+                    </g>
+                    
+                    <!-- 水波裝飾 -->
+                    <g id="wave" opacity="0.4">
+                        <path d="M 30 90 Q 35 88 40 90" stroke="#00BCD4" stroke-width="1.5" fill="none"/>
+                        <path d="M 140 90 Q 145 88 150 90" stroke="#00BCD4" stroke-width="1.5" fill="none"/>
+                    </g>
+                </svg>
+            </div>
+
+            <!-- 轉換控制 -->
+            <div class="controls">
+                <div class="control-group">
+                    <label for="pngSize">尺寸 (寬 x 高):</label>
+                    <input type="number" id="pngSize" value="180" min="64" max="1024" step="16">
+                </div>
+                <div class="control-group">
+                    <label for="bgColor">背景顏色:</label>
+                    <input type="text" id="bgColor" value="transparent" placeholder="transparent 或 #FFFFFF">
+                </div>
+            </div>
+
+            <div class="info-box">
+                <strong>💡 提示:</strong> 建議尺寸為 <strong>180×180px</strong> (iPhone標準)。輸出格式為 <strong>PNG</strong>，透明背景。
+            </div>
+
+            <div class="size-info">
+                <div class="size-item">
+                    <strong>預設尺寸:</strong><br>180×180 px
+                </div>
+                <div class="size-item">
+                    <strong>輸出格式:</strong><br>PNG (透明背景)
+                </div>
+            </div>
+        </div>
+
+        <!-- 下載按鈕 -->
+        <div class="section">
+            <div class="button-group">
+                <button class="btn-download" onclick="downloadPNG()">
+                    📥 下載 PNG
+                </button>
+                <button class="btn-copy" id="copySvgBtn" onclick="copySVGCode()">
+                    📋 複製 SVG 代碼
+                </button>
+            </div>
+        </div>
+
+        <!-- 使用說明 -->
+        <div class="section">
+            <div class="section-title">📖 使用說明</div>
+            <div class="info-box" style="background: #f5f5f5; border-left-color: #999;">
+                <strong>步驟:</strong><br>
+                1️⃣ 調整尺寸（預設 180px）<br>
+                2️⃣ 點擊「下載 PNG」按鈕<br>
+                3️⃣ 檔案會自動保存為 <code>summer-korea-icon.png</code><br>
+                4️⃣ 上傳到你的伺服器或設備<br>
+                5️⃣ 在 iPhone 上「加到主畫面」時使用此 icon<br><br>
+                <strong>iPhone 設置:</strong><br>
+                在 HTML &lt;head&gt; 中添加:<br>
+                <code>&lt;link rel="apple-touch-icon" href="/summer-korea-icon.png"&gt;</code>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 下載 PNG 函數
+        async function downloadPNG() {
+            try {
+                showError('');
+                const size = parseInt(document.getElementById('pngSize').value) || 180;
+                const bgColor = document.getElementById('bgColor').value || 'transparent';
+
+                // 獲取 SVG 元素
+                const svg = document.getElementById('iconSvg');
+                const svgString = new XMLSerializer().serializeToString(svg);
+
+                // 創建 Canvas
+                const canvas = document.createElement('canvas');
+                canvas.width = size;
+                canvas.height = size;
+                const ctx = canvas.getContext('2d');
+
+                // 設置背景
+                if (bgColor !== 'transparent') {
+                    ctx.fillStyle = bgColor;
+                    ctx.fillRect(0, 0, size, size);
+                }
+
+                // 創建圖片物件
+                const img = new Image();
+                const svgBlob = new Blob([svgString], { type: 'image/svg+xml' });
+                const url = URL.createObjectURL(svgBlob);
+
+                img.onload = function() {
+                    ctx.drawImage(img, 0, 0, size, size);
+                    URL.revokeObjectURL(url);
+
+                    // 下載
+                    canvas.toBlob(function(blob) {
+                        const downloadUrl = URL.createObjectURL(blob);
+                        const link = document.createElement('a');
+                        link.href = downloadUrl;
+                        link.download = `summer-korea-icon-${size}x${size}.png`;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        URL.revokeObjectURL(downloadUrl);
+
+                        showSuccess(`✅ PNG 已下載！(${size}×${size}px)`);
+                    }, 'image/png');
+                };
+
+                img.onerror = function() {
+                    showError('❌ 圖片加載失敗，請重試');
+                };
+
+                img.src = 'data:image/svg+xml;base64,' + btoa(svgString);
+            } catch (error) {
+                showError('❌ 轉換失敗: ' + error.message);
+                console.error(error);
+            }
+        }
+
+        // 複製 SVG 代碼
+        function copySVGCode() {
+            const svg = document.getElementById('iconSvg');
+            const svgString = new XMLSerializer().serializeToString(svg);
+            
+            navigator.clipboard.writeText(svgString).then(() => {
+                const btn = document.getElementById('copySvgBtn');
+                btn.classList.add('copied');
+                btn.textContent = '✅ 已複製！';
+                
+                setTimeout(() => {
+                    btn.classList.remove('copied');
+                    btn.textContent = '📋 複製 SVG 代碼';
+                }, 2000);
+                
+                showSuccess('✅ SVG 代碼已複製到剪貼板！');
+            }).catch(err => {
+                showError('❌ 複製失敗: ' + err);
+            });
+        }
+
+        // 顯示錯誤
+        function showError(msg) {
+            const errorEl = document.getElementById('errorMsg');
+            if (msg) {
+                errorEl.textContent = msg;
+                errorEl.style.display = 'block';
+            } else {
+                errorEl.style.display = 'none';
+            }
+        }
+
+        // 顯示成功
+        function showSuccess(msg) {
+            const successEl = document.getElementById('successMsg');
+            if (msg) {
+                successEl.textContent = msg;
+                successEl.style.display = 'block';
+                setTimeout(() => {
+                    successEl.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        // 監聽尺寸變化
+        document.getElementById('pngSize').addEventListener('change', function() {
+            const size = parseInt(this.value) || 180;
+            console.log('尺寸已更新為: ' + size + 'px');
+        });
+    </script>
+</body>
+</html>
